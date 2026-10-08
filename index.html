@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ボーズ株式会社</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: 左寄せの一枚構成。ヒーローは粒子が凝縮していくキャンバス、以下は12カラムの非対称グリッド */
+:root {
+  --bg: #f2f4f1;
+  --surface: #e7ebe6;
+  --fg: #141c19;
+  --muted: #56635d;
+  --line: #cfd7d1;
+  --accent: #0e7566;
+  --spark: #e9b824;
+  --font-display: "Dela Gothic One", "Hiragino Kaku Gothic StdN", "Yu Gothic", sans-serif;
+  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wrap: 1120px;
+  --gutter: clamp(16px, 4vw, 40px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1412; --surface: #16201d; --fg: #e4ebe7; --muted: #92a39b;
+    --line: #26332e; --accent: #3ec4ad; --spark: #f0c43a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1412; --surface: #16201d; --fg: #e4ebe7; --muted: #92a39b;
+  --line: #26332e; --accent: #3ec4ad; --spark: #f0c43a; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- header ---------- */
+.site-header {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 60px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-size: 20px; letter-spacing: .02em; }
+.logo-mark { width: 22px; height: 22px; flex: none; }
+.nav { display: flex; gap: 24px; font-size: 14px; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--fg); }
+.nav .cta { color: var(--fg); border-bottom: 2px solid var(--accent); }
+@media (max-width: 720px) { .nav a:not(.cta) { display: none; } }
+
+/* ---------- news ---------- */
+.news { background: var(--surface); border-bottom: 1px solid var(--line); }
+.news .wrap { display: grid; grid-template-columns: auto 1fr; gap: 8px 32px; padding-block: 14px; align-items: baseline; }
+.news-label { font-family: var(--font-mono); font-weight: 500; font-size: 12px; line-height: inherit; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.news ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; }
+.news li { display: grid; grid-template-columns: auto auto 1fr; gap: 12px; align-items: baseline; min-width: 0; }
+.news time { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.news .cat { font-size: 12px; color: var(--muted); min-width: 5em; }
+.news a { text-decoration: none; }
+.news a:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) {
+  .news .wrap { grid-template-columns: 1fr; }
+  .news ul { gap: 10px; }
+  .news li { grid-template-columns: auto 1fr; gap: 2px 12px; }
+  .news li > :last-child { grid-column: 1 / -1; }
+}
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero .wrap { position: relative; padding-block: clamp(72px, 12vw, 140px) clamp(56px, 9vw, 104px); }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.hero h1 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(40px, 8.2vw, 104px); line-height: 1.12; letter-spacing: -.01em;
+  margin-top: 20px; max-width: 11em;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lead { margin-top: 28px; max-width: 34em; font-size: clamp(16px, 1.6vw, 18px); color: var(--muted); }
+.hero .actions { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px;
+  font: 500 15px/1 var(--font-body); text-decoration: none; border-radius: 999px;
+  border: 1px solid var(--fg); background: var(--fg); color: var(--bg); cursor: pointer;
+  transition: transform .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn.ghost { background: transparent; color: var(--fg); }
+.hero .note { margin-top: 48px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+/* ---------- sections ---------- */
+section { padding-block: clamp(64px, 9vw, 112px); border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; grid-template-columns: 1fr 2fr; gap: 24px 48px; align-items: end; margin-bottom: clamp(36px, 5vw, 56px); }
+.sec-head h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 4vw, 44px); line-height: 1.3; margin-top: 10px; }
+.sec-head p { color: var(--muted); max-width: 36em; }
+@media (max-width: 800px) { .sec-head { grid-template-columns: 1fr; } }
+
+/* services */
+.services { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--fg); }
+.service { padding: 28px 28px 32px 0; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.service + .service { padding-left: 28px; border-left: 1px solid var(--line); }
+.service h3 { font-size: 20px; font-weight: 700; }
+.service .tag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.service p { color: var(--muted); font-size: 15px; }
+.service ul { margin: 4px 0 0; padding: 0; list-style: none; font-size: 14px; display: grid; gap: 4px; }
+.service li::before { content: "— "; color: var(--muted); }
+@media (max-width: 800px) {
+  .services { grid-template-columns: 1fr; }
+  .service, .service + .service { padding: 24px 0; border-left: 0; }
+  .service + .service { border-top: 1px solid var(--line); }
+}
+
+/* products */
+.products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.product { background: var(--surface); padding: 28px; display: grid; gap: 14px; align-content: start; min-width: 0; border-radius: 4px; }
+.product .spin { font-family: var(--font-mono); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.product .spin b { font-weight: 500; color: var(--accent); }
+.product h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.2; }
+.product p { font-size: 15px; color: var(--muted); }
+.product .meta { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 900px) { .products { grid-template-columns: 1fr; } }
+
+/* process */
+.process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: step; }
+.process li { padding: 0 24px 0 0; display: grid; gap: 10px; align-content: start; min-width: 0; counter-increment: step; }
+.process li::before {
+  content: counter(step); font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--accent);
+  padding-bottom: 16px; border-bottom: 1px solid var(--fg); margin-bottom: 8px;
+}
+.process h3 { font-size: 18px; }
+.process .dur { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.process p { font-size: 15px; color: var(--muted); }
+@media (max-width: 900px) { .process { grid-template-columns: 1fr 1fr; row-gap: 40px; } }
+@media (max-width: 520px) { .process { grid-template-columns: 1fr; } }
+
+/* about */
+.about { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.about .story { display: grid; gap: 18px; max-width: 34em; }
+.about .story p:first-child { font-size: 20px; font-weight: 500; line-height: 1.7; color: var(--fg); }
+.about .story p { color: var(--muted); }
+.facts { margin: 0; display: grid; grid-template-columns: 7em 1fr; border-top: 1px solid var(--fg); font-size: 15px; }
+.facts dt, .facts dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.facts dt { color: var(--muted); }
+.facts dd { font-variant-numeric: tabular-nums; min-width: 0; }
+@media (max-width: 800px) { .about { grid-template-columns: 1fr; } }
+
+/* careers */
+.jobs { border-top: 1px solid var(--fg); }
+.job { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 16px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.job h3 { font-size: 17px; }
+.job span { font-size: 14px; color: var(--muted); }
+.pill { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); white-space: nowrap; }
+.pill.hot { border-color: var(--spark); background: var(--spark); color: #1b1606; }
+@media (max-width: 700px) { .job { grid-template-columns: 1fr auto; } .job span { grid-column: 1; } }
+
+/* contact */
+.contact { display: grid; grid-template-columns: 1fr 1.3fr; gap: 48px; }
+.contact .info { display: grid; gap: 16px; align-content: start; color: var(--muted); }
+.contact .info strong { display: block; color: var(--fg); font-size: 15px; }
+.contact .info .mono { font-family: var(--font-mono); font-size: 14px; color: var(--fg); user-select: all; }
+form { display: grid; gap: 18px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 500; }
+.field input, .field select, .field textarea {
+  font: 15px/1.6 var(--font-body); color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; width: 100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+.form-status { font-size: 14px; color: var(--accent); min-height: 1.5em; }
+@media (max-width: 800px) { .contact { grid-template-columns: 1fr; } }
+
+/* footer */
+footer { padding-block: 40px; font-size: 13px; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="ボーズ株式会社 トップへ">
+      <svg class="logo-mark" viewBox="0 0 22 22" aria-hidden="true">
+        <circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="8" cy="11" r="3.2" fill="var(--accent)"/>
+        <circle cx="14" cy="11" r="3.2" fill="var(--accent)" opacity=".6"/>
+      </svg>
+      ボーズ
+    </a>
+    <nav class="nav" aria-label="メインメニュー">
+      <a href="#services">事業内容</a>
+      <a href="#products">プロダクト</a>
+      <a href="#process">進め方</a>
+      <a href="#about">会社概要</a>
+      <a href="#careers">採用</a>
+      <a class="cta" href="#contact">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <aside class="news" aria-labelledby="news-label">
+    <div class="wrap">
+      <h2 class="news-label" id="news-label">News</h2>
+      <ul>
+        <li><time datetime="2026-10-01">2026.10.01</time><span class="cat">プロダクト</span><a href="#products">フォトンに銀行入金データの自動取込機能を追加しました</a></li>
+        <li><time datetime="2026-09-18">2026.09.18</time><span class="cat">採用</span><a href="#careers">バックエンドエンジニアの募集を開始しました</a></li>
+        <li><time datetime="2026-09-01">2026.09.01</time><span class="cat">会社</span><span>コーポレートサイトをリニューアルしました</span></li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="hero">
+    <canvas id="condensate" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="eyebrow">Software Studio · Tokyo / Since 2014</div>
+      <h1>ばらばらのチームを、<em>ひとつの状態</em>に。</h1>
+      <p class="lead">ボーズは、業務システムとSaaSを設計・開発するソフトウェア会社です。社名はボーズ粒子から。いくつでも同じ状態に重なれる粒子のように、お客様のチームと私たちのチームが一つになって動くことを大切にしています。</p>
+      <div class="actions">
+        <a class="btn" href="#contact">相談してみる <span aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#products">プロダクトを見る</a>
+      </div>
+      <p class="note">稼働中のシステム 142件 ／ 平均取引期間 4.6年</p>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Services</div>
+          <h2>事業内容</h2>
+        </div>
+        <p>要件が固まる前の段階から、運用が始まった後まで。必要な場面に必要な人数で入り、作ったものは最後まで面倒を見ます。</p>
+      </div>
+      <div class="services">
+        <div class="service">
+          <div class="tag">受託開発</div>
+          <h3>業務システムの設計・開発</h3>
+          <p>在庫、受発注、勤怠など、現場の手順にぴったり合うシステムをゼロから作ります。既存システムの置き換えも得意です。</p>
+          <ul><li>Webアプリケーション</li><li>基幹システムの刷新</li><li>データ移行</li></ul>
+        </div>
+        <div class="service">
+          <div class="tag">プロダクト</div>
+          <h3>自社SaaSの開発・提供</h3>
+          <p>受託で繰り返し出会った課題を、誰でも使えるサービスにしています。現在3つのプロダクトを運営中です。</p>
+          <ul><li>中小企業向けSaaS</li><li>導入支援・カスタマイズ</li><li>API連携</li></ul>
+        </div>
+        <div class="service">
+          <div class="tag">技術顧問</div>
+          <h3>開発チームの立ち上げ支援</h3>
+          <p>社内に開発チームを作りたい企業に、設計レビュー、採用面接の同席、開発プロセスの整備まで伴走します。</p>
+          <ul><li>アーキテクチャ設計</li><li>コードレビュー</li><li>エンジニア育成</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Products</div>
+          <h2>プロダクト</h2>
+        </div>
+        <p>ボーズ粒子のスピンは必ず整数です。私たちのプロダクトにも、それぞれスピン番号を振っています。</p>
+      </div>
+      <div class="products">
+        <article class="product">
+          <div class="spin"><span>SPIN</span><b>s = 0</b></div>
+          <h3>ヒッグス</h3>
+          <p>シフト表と勤怠をひとつにまとめるツール。スタッフの希望を集めて、自動でシフト案を作ります。</p>
+          <div class="meta">導入 1,280社 ／ 月額 ¥9,800〜</div>
+        </article>
+        <article class="product">
+          <div class="spin"><span>SPIN</span><b>s = 1</b></div>
+          <h3>フォトン</h3>
+          <p>見積・請求・入金消込を一画面で。インボイス制度と電子帳簿保存法に対応した請求管理サービスです。</p>
+          <div class="meta">導入 3,450社 ／ 月額 ¥4,980〜</div>
+        </article>
+        <article class="product">
+          <div class="spin"><span>SPIN</span><b>s = 2</b></div>
+          <h3>グラビトン</h3>
+          <p>倉庫の棚と在庫をスマートフォンで管理。バーコードを読むだけで入出庫が記録されます。</p>
+          <div class="meta">導入 410社 ／ 月額 ¥19,800〜</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">How we work</div>
+          <h2>開発の進め方</h2>
+        </div>
+        <p>最初の打ち合わせから本番公開まで、標準的なプロジェクトは4つの段階で進みます。期間は規模によって変わります。</p>
+      </div>
+      <ol class="process">
+        <li>
+          <h3>観察</h3>
+          <div class="dur">2〜4週間</div>
+          <p>現場に伺い、実際の業務を一緒に見ます。困りごとを言葉にするところから始めます。</p>
+        </li>
+        <li>
+          <h3>試作</h3>
+          <div class="dur">3〜6週間</div>
+          <p>動く画面をすぐに作って触ってもらいます。仕様書よりも先に、手で確かめます。</p>
+        </li>
+        <li>
+          <h3>開発</h3>
+          <div class="dur">2〜6か月</div>
+          <p>2週間ごとに成果をお見せします。優先順位はその都度一緒に決め直します。</p>
+        </li>
+        <li>
+          <h3>運用</h3>
+          <div class="dur">公開後ずっと</div>
+          <p>公開して終わりにはしません。監視、改善、問い合わせ対応まで同じチームが担当します。</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Company</div>
+          <h2>会社概要</h2>
+        </div>
+      </div>
+      <div class="about">
+        <div class="story">
+          <p>物理学科の研究室で出会った3人が、2014年に本郷の小さな部屋で始めた会社です。</p>
+          <p>最初の仕事は、近所の製本所の在庫管理でした。紙の台帳をやめたいという相談に、毎週通って少しずつ画面を作りました。そのやり方が、今も私たちの基本になっています。</p>
+          <p>人数が増えた今も、一つのプロジェクトは小さなチームで担当し、お客様と直接話すことを続けています。</p>
+        </div>
+        <dl class="facts">
+          <dt>社名</dt><dd>ボーズ株式会社（Bose Software Inc.）</dd>
+          <dt>設立</dt><dd>2014年4月</dd>
+          <dt>代表者</dt><dd>代表取締役 粒来 凝（つぶらい ぎょう）</dd>
+          <dt>所在地</dt><dd>東京都文京区本郷 0-0-0 凝縮ビル 4F</dd>
+          <dt>資本金</dt><dd>5,000万円</dd>
+          <dt>従業員数</dt><dd>48名（2026年10月時点）</dd>
+          <dt>事業内容</dt><dd>受託ソフトウェア開発、SaaSの開発・運営、技術顧問</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="careers">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Careers</div>
+          <h2>採用情報</h2>
+        </div>
+        <p>リモート勤務と出社を自由に選べます。週1回、本郷のオフィスで全員そろって昼食をとる日があります。</p>
+      </div>
+      <div class="jobs">
+        <div class="job"><h3>バックエンドエンジニア</h3><span>Go / PostgreSQL</span><span>正社員・リモート可</span><span class="pill hot">急募</span></div>
+        <div class="job"><h3>フロントエンドエンジニア</h3><span>TypeScript / React</span><span>正社員・リモート可</span><span class="pill">募集中</span></div>
+        <div class="job"><h3>プロダクトデザイナー</h3><span>Figma / UXリサーチ</span><span>正社員・週3出社</span><span class="pill">募集中</span></div>
+        <div class="job"><h3>カスタマーサクセス</h3><span>フォトン担当</span><span>正社員・週2出社</span><span class="pill">募集中</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Contact</div>
+          <h2>お問い合わせ</h2>
+        </div>
+        <p>まだ何を作るか決まっていなくても大丈夫です。2営業日以内に担当者からご連絡します。</p>
+      </div>
+      <div class="contact">
+        <div class="info">
+          <div><strong>メール</strong><span class="mono">hello@bose-soft.example</span></div>
+          <div><strong>電話</strong><span class="mono">03-0000-0000</span>（平日 10:00〜18:00）</div>
+          <div><strong>オフィス</strong>東京都文京区本郷 0-0-0 凝縮ビル 4F<br>東京メトロ丸ノ内線 本郷三丁目駅から徒歩3分</div>
+        </div>
+        <form id="contact-form" novalidate>
+          <div class="row">
+            <div class="field"><label for="f-name">お名前</label><input id="f-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="f-company">会社名</label><input id="f-company" name="company" autocomplete="organization"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="f-email">メールアドレス</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+            <div class="field">
+              <label for="f-topic">ご相談内容</label>
+              <select id="f-topic" name="topic">
+                <option>受託開発について</option>
+                <option>プロダクトについて</option>
+                <option>技術顧問について</option>
+                <option>採用について</option>
+                <option>その他</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="f-message">メッセージ</label><textarea id="f-message" name="message" rows="5" required></textarea></div>
+          <div><button class="btn" type="submit">送信内容を確認する</button></div>
+          <p class="form-status" id="form-status" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 ボーズ株式会社</span>
+    <span>このサイトは架空の企業のサンプルです。</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // 粒子がばらばらの状態から、ひとつの塊（凝縮体）に集まっていく
+  const canvas = document.getElementById('condensate');
+  const ctx = canvas.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w = 0, h = 0, dpr = 1, parts = [], start = performance.now();
+
+  function color(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(Math.min(220, w * h / 4000));
+    parts = Array.from({ length: n }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6,
+      a: Math.random() * Math.PI * 2, r: Math.random() * 1.6 + 1,
+      spark: Math.random() < .06
+    }));
+  }
+
+  function frame(now) {
+    const t = reduce ? 1 : Math.min((now - start) / 6000, 1);
+    const k = t * t * (3 - 2 * t);
+    const cx = w > 800 ? w * .78 : w * .7, cy = h * .42;
+    const radius = Math.min(w, h) * (w > 800 ? .2 : .16);
+    const accent = color('--accent'), spark = color('--spark'), muted = color('--line');
+    ctx.clearRect(0, 0, w, h);
+    for (const p of parts) {
+      p.x += p.vx * (1 - k); p.y += p.vy * (1 - k);
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+      p.a += 0.004 + 0.01 * k;
+      const ring = radius * (0.25 + 0.75 * ((p.r - 1) / 1.6));
+      const tx = cx + Math.cos(p.a) * ring, ty = cy + Math.sin(p.a) * ring * .55;
+      const x = p.x + (tx - p.x) * k, y = p.y + (ty - p.y) * k;
+      ctx.globalAlpha = .35 + .5 * k;
+      ctx.fillStyle = p.spark ? spark : (k > .2 ? accent : muted);
+      ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!reduce) requestAnimationFrame(frame);
+  }
+
+  resize();
+  addEventListener('resize', resize);
+  if (reduce) frame(0); else requestAnimationFrame(frame);
+
+  // フォーム：送信先は未接続のため、入力確認のみ行う
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const missing = [...form.querySelectorAll('[required]')].filter(el => !el.value.trim());
+    const email = form.elements.email;
+    if (missing.length) {
+      status.textContent = '「' + missing.map(el => form.querySelector('label[for="' + el.id + '"]').textContent).join('」「') + '」を入力してください。';
+      missing[0].focus();
+      return;
+    }
+    if (!email.checkValidity()) {
+      status.textContent = 'メールアドレスの形式を確認してください（例：name@example.com）。';
+      email.focus();
+      return;
+    }
+    status.textContent = '入力内容を確認しました。このサイトはサンプルのため、実際には送信されません。';
+  });
+})();
+</script>
+</body>
+</html>
